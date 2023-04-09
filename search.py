@@ -13,28 +13,41 @@ search_params = {
     "params": {"nprobe": 10},
 }
 
-while True:
-    print("#"*80)
-    query = input("Enter query: ")
-    if query == "exit" or query =='q':
-        break
-
+def search(query, limit=3):
     query_embedding = model.encode(query)
 
     results = collection.search(
         data=[query_embedding],
         anns_field="abstract_embeddings",
         param=search_params,
-        limit=3,
-        output_fields=["title", "abstract"]
+        limit=limit,
+        output_fields=["title", "abstract", "id", "authors"]
     )
 
     hits = results[0]
 
-    titles = [hit.entity.get("title") for hit in results[0]]
+    hit_docs = [ {
+        "title": hit.entity.get("title"),
+        "abstract": hit.entity.get("abstract"),
+        "id": hit.entity.get("id"),
+        "authors": hit.entity.get("authors"),
+    } for hit in hits]
 
-    for hit in hits:
-        print("hit: ", hit)
-        print("title: ", hit.entity.get("title"))
-        print("abstract: ", hit.entity.get("abstract"))
-        print()
+    return hit_docs
+
+
+if __name__ == "__main__":
+    while True:
+        print("#"*80)
+        query = input("Enter query: ")
+        if query == "exit" or query =='q':
+            break
+
+        hits = search(query)
+        print(f"Found {len(hits)} hits")
+        for hit in hits:
+            print(f"Title: {hit['title']}")
+            print(f"Abstract: {hit['abstract']}")
+            print(f"Authors: {hit['authors']}")
+            print(f"ID: {hit['id']}")
+            print()
