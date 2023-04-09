@@ -3,6 +3,8 @@ from sentence_transformers import SentenceTransformer, util
 
 from pymilvus import Collection, connections
 
+PTH = "arxiv-small.json"
+
 connections.connect("default", host="localhost", port="19530")
 papers_collection = Collection("papers")
 papers_collection.load()
@@ -14,7 +16,7 @@ def load_json(path):
 
 model = SentenceTransformer("sentence-transformers/multi-qa-mpnet-base-dot-v1")
 
-data = load_json("arxiv-small.json")
+data = load_json(PTH)
 abstracts = [d["abstract"].strip() for d in data]
 embeddings = model.encode(abstracts)
 
@@ -26,6 +28,5 @@ entities = [
     [ d['categories'] for d in data],
     embeddings
 ]
-
 
 papers_collection.insert(entities)
