@@ -31,6 +31,7 @@ def search(query, limit=3):
         "abstract": hit.entity.get("abstract"),
         "id": hit.entity.get("id"),
         "authors": hit.entity.get("authors"),
+        "score": hit.score
     } for hit in hits]
 
     return hit_docs
