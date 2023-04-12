@@ -7,7 +7,7 @@ app = FastAPI()
 def read_root():
     return {"msg": "Hello World"}
 
-@app.get('/search')
+@app.get('/api/search')
 def search(q: str, limit: int = 10):
     hits = sim_search(q, limit)
     return {"hits": hits}
