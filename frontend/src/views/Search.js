@@ -9,19 +9,20 @@ import Text from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import Button from '@mui/material/Button';
 
 import SearchResult from '../components/SearchResult';
 
 
-async function getSearchResults(query) {
-  const res = await get(`/search?q=${query}`);
+async function getSearchResults(query, limit=10) {
+  const res = await get(`/search`, { params: { q: query, limit }});
   return res?.data?.hits;
 }
 
-function useSearch(query) {
+function useSearch({query, limit}) {
   const { data, isLoading, error } = useReactQuery(
-    ['search', query],
-    () => getSearchResults(query),
+    ['search', query, limit],
+    () => getSearchResults(query, limit),
     {
       enabled: !!query,
     }
@@ -37,8 +38,9 @@ function useSearch(query) {
 export default function Search() {
   const { q: query } = useQuery();
   const [search, setSearch] = useState(query);
+  const [limit, setLimit] = useState(10);
 
-  const { searchResults, isLoading, error } = useSearch(query);
+  const { searchResults, isLoading, error } = useSearch({ query, limit });
   
   return (
     <div>
@@ -68,6 +70,11 @@ export default function Search() {
           item={result}
         />
       ))}
+      <Button
+        onClick={() => {
+          setLimit(limit + 5);
+        }}
+      >Show more</Button>
     </div>
   );
 }
