@@ -1,6 +1,7 @@
 import Text from '@mui/material/Typography';
 
 import styles from './SearchResult.module.css';
+import Link from '@mui/material/Link';
 
 export default function Searchresult({ item }) {
   return (
@@ -11,9 +12,13 @@ export default function Searchresult({ item }) {
       <div
         className={styles.titleRow}
       >
-        <Text
-          variant="h6"
-        >{item.title}</Text>
+        <Link
+          href={`https://arxiv.org/abs/${item.id}`}
+        >
+          <Text
+            variant="h6"
+          >{item.title}</Text>
+          </Link>
         <Text
           className={styles.score}
         >{item.score}</Text>
@@ -23,5 +28,4 @@ export default function Searchresult({ item }) {
       >{item.authors}</Text>
     </div>
   );
-
 }
