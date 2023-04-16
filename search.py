@@ -13,7 +13,7 @@ search_params = {
     "params": {"nprobe": 10},
 }
 
-def search(query, limit=3):
+def search(query, limit=50):
     query_embedding = model.encode(query)
 
     results = collection.search(
