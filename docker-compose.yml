@@ -43,7 +43,18 @@ services:
     depends_on:
       - "etcd"
       - "minio"
-
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: arxiv
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes: 
+  pgdata:
 networks:
   default:
     name: milvus

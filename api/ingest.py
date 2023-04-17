@@ -3,7 +3,9 @@ from sentence_transformers import SentenceTransformer, util
 import time
 from pymilvus import Collection, connections
 
-PTH = "arxiv-large.json"
+from models.paper import insert_papers
+
+PTH = "../arxiv-large.json"
 
 connections.connect("default", host="localhost", port="19530")
 papers_collection = Collection("papers")
@@ -29,25 +31,44 @@ def load_json(path, batch_size=1000):
         yield data
 
 
-print('ingensting')
-i = 0
 
-for data in load_json(PTH, 4096):
-    print('step', i)
-    t0 = time.time()
-    abstracts = [d["abstract"].strip() for d in data]
-    embeddings = model.encode(abstracts)
+def ingest_embeddings():
+    print('ingesting...')
+    i = 0
 
-    entities = [
-        [ d['id'] for d in data],
-        [ d['title'] for d in data],
-        [ d['abstract'] for d in data],
-        [ d['authors'] for d in data],
-        [ d['categories'] for d in data],
-        embeddings
-    ]
+    for data in load_json(PTH, 4096):
+        print('step', i)
+        t0 = time.time()
+        abstracts = [d["abstract"].strip() for d in data]
+        embeddings = model.encode(abstracts)
 
-    t1 = time.time()
-    i += len(data)
-    papers_collection.insert(entities)
-    print(f"ingested {len(data)} in {t1-t0} seconds ({i} total)")
+        entities = [
+            [ d['id'] for d in data],
+            embeddings
+        ]
+
+        t1 = time.time()
+        i += len(data)
+        papers_collection.insert(entities)
+        print(f"ingested {len(data)} in {t1-t0} seconds ({i} total)")
+
+def ingest_papers():
+    i = 0
+
+    for data in load_json(PTH, 2048):
+        print('step', i)
+        papers = [
+            {
+                "id": d["id"],
+                "title": d["title"],
+                "abstract": d["abstract"],
+                "authors": d["authors"],
+                "categories": d["categories"]
+            } for d in data
+        ]
+        insert_papers(papers)
+        i += len(data)
+
+if __name__ == "__main__":
+    #ingest_papers()
+    ingest_embeddings()

@@ -2,3 +2,4 @@
 volumes/
 __pycache__/
 todo.md
+.env
