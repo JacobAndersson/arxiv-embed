@@ -26,3 +26,4 @@ Once this is done you can start the process of setting up the databases
 ## Future work
 * More data. Current dataset is not fully up to date so scraping arxiv for up to date papers would be needed. Doing that with getting ip blocked however, is a bit trickier.
 * Different embedders. [Instructor](https://arxiv.org/abs/2212.09741) in particular looks really interesting
+* Speed.

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from search import search as sim_search
 from cache import MemoryCache
 from rerank import rerank
+from models.paper import get_full_docs
 
 app = FastAPI()
 
@@ -18,8 +19,9 @@ def search(q: str, limit: int = 10):
     if cache_hit:
         return {"hits": cache_hit[:limit]}
 
-    hits = sim_search(q)
-    hits = rerank(q, hits)
+    ids = sim_search(q)
+    docs = get_full_docs(ids)
+    docs = rerank(q, docs)
 
-    cache.set(q, hits)
-    return {"hits": hits[:limit]}
+    cache.set(q, docs)
+    return {"hits": docs[:limit]}

@@ -21,20 +21,12 @@ def search(query, limit=50):
         anns_field="abstract_embeddings",
         param=search_params,
         limit=limit,
-        output_fields=["title", "abstract", "id", "authors"]
+        output_fields=["id"]
     )
 
     hits = results[0]
-
-    hit_docs = [ {
-        "title": hit.entity.get("title"),
-        "abstract": hit.entity.get("abstract"),
-        "id": hit.entity.get("id"),
-        "authors": hit.entity.get("authors"),
-        "score": hit.score
-    } for hit in hits]
-
-    return hit_docs
+    ids = [hit.entity.get("id") for hit in hits]
+    return ids 
 
 
 if __name__ == "__main__":

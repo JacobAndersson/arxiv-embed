@@ -19,3 +19,19 @@ def insert_papers(papers):
 
     db.conn.execute(q.get_sql())
     db.conn.commit()
+
+def get_full_docs(ids):
+    q = Query.from_(papersTable).select("id", "title", "authors", "abstract").where(papersTable.id.isin(ids))
+    docs = db.conn.execute(q.get_sql()).fetchall()
+
+    entries = []
+    for doc in docs:
+        #Ugly. But so is python
+        entries.append({
+            "id": doc[0],
+            "title": doc[1],
+            "authors": doc[2],
+            "abstract": doc[3],
+        })
+
+    return entries
